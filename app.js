@@ -4,25 +4,13 @@ var DEFAULTS = {
 };
 
 
-angular.module("app", [ "ui.bootstrap" ])
-.config(function(){
-})
+angular.module("app", [])
 .run(function( $rootScope ){
 	var colors = $rootScope.colors = {};
 	colors["ffffff"] = new Color( "ffffff" );
-	colors["ff0000"] = new Color( "ff0000" );
-	colors["ffff00"] = new Color( "ffff00" );
-	colors["ff00ff"] = new Color( "ff00ff" );
-	colors["00ffff"] = new Color( "00ffff" );
-	colors["0000ff"] = new Color( "0000ff" );
 	colors["000000"] = new Color( "000000" );
 })
 .controller("appController", function( $scope, $rootScope, $element, $timeout, $q ){
-	var stats = new Stats();
-	stats.showPanel( 1 );
-	stats.dom.style.top = "auto";
-	stats.dom.style.bottom = "0px";
-	$element[0].appendChild( stats.dom );
 
 	$scope.editingColors = false;
 	$scope.bg_image = null;
@@ -159,16 +147,13 @@ angular.module("app", [ "ui.bootstrap" ])
 	}
 	
 	function loop(){
-		stats.begin();
 		try {
 			render();
 			loopTimeout = setTimeout( loop, 200 );
-//			loopTimeout = setTimeout( loop, 200 );
 		} catch( err ){
 			console.error( err );
 			debugger;
 		}
-		stats.end();
 	}
 	function requestLoop(){
 		
