@@ -34,24 +34,29 @@ angular.module("app", [])
 				return;
 			} else if( img instanceof Image ){
 				resolve( img );
+			} else if( img == null & confirm( "Are you sure you want to unselect current background image? (Not saved until next saveable act)" )){
+				resolve( null );
 			} else reject( "Invalid arguments" );
 		}).then(function( img ){
 			offset_x = offset_x || 0;
 			offset_y = offset_y || 0;
 
-			$scope.bg_image = $scope.bg_image || {};
-			$scope.bg_image.img = img;
-			$scope.bg_image.x   = offset_x;
-			$scope.bg_image.y   = offset_y;
+			if( img ){
+				$scope.bg_image = $scope.bg_image || {};
+				$scope.bg_image.img = img;
+				$scope.bg_image.x   = offset_x;
+				$scope.bg_image.y   = offset_y;
 
-
-			try {
-				delete $scope.bg_image.base64;
-				toDataURL( img.src, function( base64 ){
-					$scope.bg_image.base64 = base64;
-				});
-			} catch( err ){
-				console.error( err );
+				try {
+					delete $scope.bg_image.base64;
+					toDataURL( img.src, function( base64 ){
+						$scope.bg_image.base64 = base64;
+					});
+				} catch( err ){
+					console.error( err );
+				}
+			} else {
+				$scope.bg_image = null;
 			}
 
 			return $scope.bg_image;
@@ -69,12 +74,33 @@ angular.module("app", [])
 	};
 
 	/*************************************/
+	$scope.doClearStitches = function(){
+		if(!confirm( "Are you sure you want to clear current stitches? (Not saved until next saveable act)" )) return;
+		for( var y in settings.grid )
+		for( var x in settings.grid[ y ]){
+			settings.grid[ y ][ x ] = null;
+		}
+	}
 
+	$scope.doSelectImage = function(){
+		inputFile.click();
+		var changeFunction = function(){
+			window.removeEventListener( 'change', changeFunction, false );
+			var file = inputFile.files[0];
+			var reader = new FileReader();
+			reader.onload = function (event) {
+				var base64 = event.target.result
+				$scope.selectImage( base64 );
+			}
+			reader.readAsDataURL( file );
+		};
+		window.addEventListener("change", changeFunction, false);
+	};
 	$scope.addColor = function( color ){
 		inputColor.click();
 		var changeFunction = function(){
-			var color = inputColor.value;
 			window.removeEventListener( 'change', changeFunction, false );
+			var color = inputColor.value;
 			$scope._addColor( color );
 		};
 		window.addEventListener("change", changeFunction, false);

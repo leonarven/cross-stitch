@@ -42,33 +42,35 @@
 				><span class="oi oi-plus"></span></a>
 
 			</div>
-			<div id="sidebar" ng-if="sidebarOpen">
-				<ul role="menu">
-					<li role="menuitem"><a href>Tyhjennä pistot</a></li>
-					<li role="menuitem"><a href>Tyhjennä kuva</a></li>
-					<li class="divider"></li>
-					<li role="menuitem"><a href>Muokkaa taustan kuvaa</a></li>
-					<li role="menuitem"><a href>Muokkaa ruutuja</a></li>
-
-				</ul>
-				<label>
-					<h5 style="text-align:center;display:block">asd</h5>
+			<div id="sidebar" class="col-12 col-md-8 col-lg-6" ng-if="sidebarOpen">
+				<label class="col-12">
+					<h5 style="text-align:center;display:block">Grid line opacity</h5>
 					<div class="input-group">
 						<input ng-model="settings.grid_opacity" ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1">
 					</div>
 				</label>
-				<label class="row">
-					<h5 style="text-align:center;display:block">asd</h5>
+				<label class="col-12">
+					<h5 style="text-align:center;display:block">Stitchs opacity</h5>
 					<div class="input-group">
 						<input ng-model="settings.fg_opacity"   ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1">
 					</div>
 				</label>
-				<label>
-					<h5 style="text-align:center;display:block">asd</h5>
+				<label class="col-12">
+					<h5 style="text-align:center;display:block">Background opacity</h5>
 					<div class="input-group">
 						<input ng-model="settings.bg_opacity"   ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1">
 					</div>
 				</label>
+				<hr>
+				<div class="row">
+					<div class="col" style="text-align:center">
+						<a href class="btn-clear-stitchs" ng-click="doClearStitches()">Clear stitchs</a>
+					</div>
+					<div class="col" style="text-align:center">
+						<a href ng-hide="bg_image" class="btn-select-bgimage" ng-click="doSelectImage()">Select bgimage</a>
+						<a href ng-show="bg_image" class="btn-clear-bgimage" ng-click="selectImage( null )">Clear bgimage</a>
+					</div>
+				</div>
 			</div>
 			<div class="left-btns">
 				<a class="btn" ng-click="sidebarOpen=!sidebarOpen" ng-class="{ 'active': sidebarOpen }">
@@ -78,6 +80,7 @@
 		</div>
 
 		<input id="inputColor" type="color" style="display:none" />
+		<input id="inputFile"  type="file"  style="display:none" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
 		<script src="app.js"></script>
