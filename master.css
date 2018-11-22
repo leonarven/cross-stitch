@@ -1,0 +1,93 @@
+body {
+	margin      : 0px;
+	padding     : 0px;
+	user-select : none;
+}
+
+.dropdown.open > .dropdown-menu { display: block; }
+
+#controls {
+	pointer-events : none;
+	touch-actions  : none;
+	position : fixed;
+	width    : 100%;
+	height   : 100%;
+	left     : 0px;
+	top      : 0px;
+}
+
+#controls #sidebar,
+#controls .colors,
+#controls .left-btns,
+#controls .right-btns {
+	pointer-events : initial;
+	touch-actions  : initial;
+	position       : absolute;
+}
+
+#controls .colors     > .btn,
+#controls .left-btns  > .btn,
+#controls .right-btns > .btn {
+	display: inline-block;
+	font-size: 1.2em;
+	cursor: pointer;
+	border-radius: 50%;
+	border: 2px solid #000000;
+	background: #ffffff;
+	margin: 2px;
+	padding: .75em;
+}
+#controls .colors     .dropdown-toggle::after,
+#controls .left-btns  .dropdown-toggle::after,
+#controls .right-btns .dropdown-toggle::after {
+	display: none;
+}
+
+#controls .colors     > .btn > .oi,
+#controls .left-btns  > .btn > .oi,
+#controls .right-btns > .btn > .oi {
+	display : inline-block;
+	width   : 1.3em;
+	height  : 1.3em;
+}
+
+	
+#controls .colors     > .btn.active,
+#controls .left-btns  > .btn.active,
+#controls .right-btns > .btn.active {
+	margin       : 1px;
+	border-width : 3px;
+	box-shadow   : 0px 0px 10px #000000;
+}
+
+#controls .colors {
+	width        : 100%;
+	bottom       : 0px;
+	margin-left  : auto;
+	margin-right : auto;
+	text-align   : center;
+}
+#controls .colors .color {
+	color: transparent;
+}
+
+#controls .left-btns {
+	top: 0px;
+	left: 0px;
+}
+
+#controls .right-btns {
+	top: 0px;
+	right: 0px;
+}
+
+#sidebar {
+	position: fixed;
+	left   : 0px;
+	top    : 0px;
+	bottom : 0px;
+	width  : 50%;
+	box-shadow: 5px 0px 50px #29292963;
+	background-color: #ffffffbf;
+	border-right: 2px solid #a4a4a4;
+}

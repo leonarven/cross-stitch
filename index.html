@@ -1,0 +1,75 @@
+<html ng-app="app">
+	<head>
+                <meta charset="utf-8">
+                <title>Pistiristelyä</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+		<link href="node_modules/open-iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css">
+		<link rel="stylesheet" type="text/css" href="master.css">
+	</head>
+	<body ng-controller="appController" ng-class="{ 'locked': locked }">
+		<div id="container">
+			<div id="scene">
+				<canvas id="canvas" ng-click="onClick( $event )" />
+			</div>
+		</div>
+		<div id="controls" ng-init="sidebarOpen=false">
+			<div class="colors">
+
+				<a class="btn color"
+				   ng-repeat="color in colors"
+				   ng-hide="editingColors"
+				   ng-style="color.btnStyle"
+				   ng-class="{ 'active': selected_color == color }"
+				   ng-click="toggleColorSelection( color )"
+				><span class="oi oi-menu"></span></a>
+
+				<a class="btn btn-rm-color"
+				   ng-repeat="color in colors"
+				   ng-show="editingColors"
+				   ng-style="color.btnStyle"
+				   ng-click="rmColor( color )"
+				><span class="oi oi-trash"></span></a>
+
+				<a class="btn"
+				   ng-class="{ 'active': editingColors }"
+				   ng-click="editingColors=!editingColors"
+				><span class="oi oi-cog" ng-class="{ 'oi-x': editingColors }"></span></a>
+
+				<a class="btn"
+				   ng-style="{ 'visibility': editingColors ? 'visible' : 'hidden' }"
+				   ng-click="addColor()"
+				><span class="oi oi-plus"></span></a>
+
+			</div>
+			<div id="sidebar" ng-if="sidebarOpen">
+				<ul role="menu">
+					<li role="menuitem"><a href>Tyhjennä pistot</a></li>
+					<li role="menuitem"><a href>Tyhjennä kuva</a></li>
+					<li class="divider"></li>
+					<li role="menuitem"><a href>Muokkaa taustan kuvaa</a></li>
+					<li role="menuitem"><a href>Muokkaa ruutuja</a></li>
+
+					<li role="menuitem" class="input-group"><input ng-model="settings.grid_opacity" ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1"></li>
+					<li role="menuitem" class="input-group"><input ng-model="settings.fg_opacity"   ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1"></li>
+					<li role="menuitem" class="input-group"><input ng-model="settings.bg_opacity"   ng-blur="saveSettings()" class="form-control" type="range" min="0" max="1" step="0.1"></li>
+				</ul>
+			</div>
+			<div class="left-btns">
+				<a class="btn" ng-click="sidebarOpen=!sidebarOpen" ng-class="{ 'active': sidebarOpen }">
+					<span class="oi" ng-class="[ sidebarOpen ? 'oi-x' : 'oi-menu' ]"></span>
+				</a>
+			</div>
+		</div>
+
+		<input id="inputColor" type="color" style="display:none" />
+
+		<script src="node_modules/jquery/dist/jquery.min.js"></script>	
+		<script src="node_modules/angular/angular.min.js"></script>
+		<script src="node_modules/three/build/three.min.js"></script>
+		<script src="node_modules/stats.js/build/stats.min.js"></script>
+		<script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
