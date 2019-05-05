@@ -2,6 +2,7 @@ body {
 	margin      : 0px;
 	padding     : 0px;
 	user-select : none;
+	overflow    : hidden;
 }
 
 .dropdown.open > .dropdown-menu { display: block; }
@@ -16,18 +17,18 @@ body {
 	top      : 0px;
 }
 
-#controls #sidebar,
-#controls .colors,
-#controls .left-btns,
-#controls .right-btns {
+#sidebar,
+#colors,
+#left-btns,
+#right-btns {
 	pointer-events : initial;
 	touch-actions  : initial;
 	position       : absolute;
 }
 
-#controls .colors     > .btn,
-#controls .left-btns  > .btn,
-#controls .right-btns > .btn {
+#colors     > .btn,
+#left-btns  > .btn,
+#right-btns > .btn {
 	display: inline-block;
 	font-size: 1.2em;
 	cursor: pointer;
@@ -37,46 +38,47 @@ body {
 	margin: 2px;
 	padding: .75em;
 }
-#controls .colors     .dropdown-toggle::after,
-#controls .left-btns  .dropdown-toggle::after,
-#controls .right-btns .dropdown-toggle::after {
+#colors     .dropdown-toggle::after,
+#left-btns  .dropdown-toggle::after,
+#right-btns .dropdown-toggle::after {
 	display: none;
 }
 
-#controls .colors     > .btn > .oi,
-#controls .left-btns  > .btn > .oi,
-#controls .right-btns > .btn > .oi {
+#colors     > .btn > .oi,
+#left-btns  > .btn > .oi,
+#right-btns > .btn > .oi {
 	display : inline-block;
 	width   : 1.3em;
 	height  : 1.3em;
+	top     : 3px;
 }
 
 	
-#controls .colors     > .btn.active,
-#controls .left-btns  > .btn.active,
-#controls .right-btns > .btn.active {
+#colors     > .btn.active,
+#left-btns  > .btn.active,
+#right-btns > .btn.active {
 	margin       : 1px;
 	border-width : 3px;
 	box-shadow   : 0px 0px 25px #000000;
 }
 
-#controls .colors {
+#colors {
 	width        : 100%;
 	bottom       : 0px;
 	margin-left  : auto;
 	margin-right : auto;
 	text-align   : center;
 }
-#controls .colors .color {
+#colors .color {
 	color: transparent;
 }
 
-#controls .left-btns {
+#left-btns {
 	top: 0px;
 	left: 0px;
 }
 
-#controls .right-btns {
+#right-btns {
 	top: 0px;
 	right: 0px;
 }

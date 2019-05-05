@@ -10,7 +10,7 @@ angular.module("app", [])
 	colors["ffffff"] = new Color( "ffffff" );
 	colors["000000"] = new Color( "000000" );
 
-	onResize();
+/*	onResize();
 	$rootScope.$watch(function(){ return document.body.clientWidth;  }, onResize );
 	$rootScope.$watch(function(){ return document.body.clientHeight; }, onResize );
 	document.body.onscroll = ()=>{
@@ -28,18 +28,38 @@ angular.module("app", [])
 			console.log( "onResize() ::", _nw+"x"+_nh, "->", $rootScope.windowWidth+"x"+$rootScope.windowHeight );
 			$timeout();
 		}
-	}
+	}*/
 })
 .controller("appController", function( $scope, $rootScope, $element, $timeout, $q ){
 
 	$scope.editingColors = false;
-	$scope.bg_image = null;
-	$scope.localStorage = window.localStorage;
+	$scope.bg_image      = null;
+	$scope.localStorage  = window.localStorage;
 
 	var settings = window.settings = $scope.settings = {};
 	var ctx;
 	var colors = $scope.colors = {};
 	var loopTimeout;
+
+	$scope.view = settings.view = {
+		leftOffset : 0,
+		topOffset  : 0,
+		zoomLevel  : 1
+	};
+
+	setInterval(function(){
+		return;
+		var box = ctx.canvas.getBoundingClientRect();
+		console.log( box.x+$scope.view.leftOffset, box.y+$scope.view.topOffset );
+		if( Math.abs(box.x+$scope.view.leftOffset) > 10 || Math.abs(box.y+$scope.view.topOffset) > 10 ){
+			$timeout(function(){
+				console.log(box.x, box.y, $scope.view);
+				$scope.view.leftOffset = -parseInt( box.x );
+				$scope.view.topOffset  = -parseInt( box.y );
+				console.log( $scope.view );
+			});
+		}
+	}, 1000);
 
 	/*************************************/
 
@@ -137,10 +157,25 @@ angular.module("app", [])
 		if( $scope.selected_color == $scope.colors[ key ]) $scope.selected_color = null;
 		delete $scope.colors[ key ];
 		$scope.editingColors = false;
-	};
+	}
 	$scope.changeColor = function( oldColor, newColor ){
 		console.log( "changeColor", oldColor, newColor );
-	};
+	}
+
+	/*************************************/
+
+	$scope.zoom = function( p ){
+		$scope.view.zoomLevel = parseInt( $scope.view.zoomLevel * p * 100 ) / 100;
+	}
+	$scope.toggleFullScreen = function(){
+		if( document.fullscreen ){
+			document.exitFullscreen();
+			$rootScope.inFullscreen = false;
+		} else {
+			document.body.requestFullscreen();
+			$rootScope.inFullscreen = true;
+		}
+	}
 
 	/*************************************/
 
@@ -152,6 +187,29 @@ angular.module("app", [])
 	}).then(function(){
 
 		$scope.toggleLock( false );
+
+		document.body.addEventListener( "pointerdown", handleMove );
+		document.body.addEventListener( "pointermove", handleMove );
+		document.body.addEventListener( "pointerover", handleMove );
+
+		function handleMove( e ){
+			if( e.movementX == 0 && e.movementY == 0 ) return false;
+			handleDrag( e );
+		}
+/*		function handleDrag( e );
+			if( e.buttons == 0 ) return $scope.dragging = 0, false;
+			console.log( e.movementX, e.movementY, e.buttons, e );
+
+			$scope.dragging = true;
+			e.preventDefault();
+
+			$timeout(()=>{
+				var xp = (e.movementX < 0 ? -1 : e.movementX && 1) * Math.max( Math.abs( e.movementX ), settings.col_size );
+				var yp = (e.movementY < 0 ? -1 : e.movementY && 1) * Math.max( Math.abs( e.movementY ), settings.col_size );
+				$scope.view.leftOffset += xp; //e.movementX; //xp * Math.ceil( Math.abs( e.movementX / settings.col_size )) * settings.col_size;
+				$scope.view.topOffset  += yp; //e.movementY; //yp * Math.ceil( Math.abs( e.movementY / settings.col_size )) * settings.col_size;
+			});
+		}*/
 
 		$timeout( loop );
 	});
@@ -204,21 +262,36 @@ angular.module("app", [])
 	function requestLoop(){
 		
 	}
+	var __dragTimeout;
+	function handleDrag( e ){
+		if( e.buttons == 0 ) return false;
+		$scope.dragging = true;
+		clearTimeout( __dragTimeout );
+		__dragTimeout = setTimeout(()=>$scope.dragging=false, 500 )
+		e.preventDefault();
+		$timeout(()=>{
+			var xp = (e.movementX < 0 ? -1 : e.movementX && 1) * Math.max( Math.abs( e.movementX ), settings.col_size );
+			var yp = (e.movementY < 0 ? -1 : e.movementY && 1) * Math.max( Math.abs( e.movementY ), settings.col_size );
+			$scope.view.leftOffset += xp; //e.movementX; //xp * Math.ceil( Math.abs( e.movementX / settings.col_size )) * settings.col_size;
+			$scope.view.topOffset  += yp; //e.movementY; //yp * Math.ceil( Math.abs( e.movementY / settings.col_size )) * settings.col_size;
+		});
+	}
 	function onClick( event ){
-		if( !$scope.locked ){
-			var x = event.offsetX;
-			var y = event.offsetY;
+		if( $scope.dragging ) return;
+		if( $scope.locked ) return;
 
-			var Gx = parseInt( x / settings.col_size );
-			var Gy = parseInt( y / settings.col_size );
+		var x = event.offsetX;
+		var y = event.offsetY;
 
-			settings.grid[ Gy ][ Gx ] = settings.grid[ Gy ][ Gx ] == $scope.selected_color ? null : $scope.selected_color;
+		var Gx = parseInt( x / settings.col_size );
+		var Gy = parseInt( y / settings.col_size );
 
-			$scope.saveSettings();
+		settings.grid[ Gy ][ Gx ] = settings.grid[ Gy ][ Gx ] == $scope.selected_color ? null : $scope.selected_color;
 
-			clearTimeout( loopTimeout );
-			loop();
-		}
+		$scope.saveSettings();
+
+		clearTimeout( loopTimeout );
+		loop();
 	}
 	$scope.onClick = onClick;
 
@@ -270,9 +343,13 @@ angular.module("app", [])
 
 			ctx = canvas.getContext("2d");
 
-			var _grid = new Array( settings.rows ).fill( null ).map(v=>new Array( settings.cols ).fill( null ));
-			
+			var _grid   = new Array( settings.rows ).fill( null ).map(v=>new Array( settings.cols ).fill( null ));
 			var _colors = {};
+			var _view   = {};
+			_view.zoomLevel  = settings.view && settings.view.zoomLevel  || 1;
+			_view.leftOffset = settings.view && settings.view.leftOffset || 0;
+			_view.topOffset  = settings.view && settings.view.topOffset  || 0;
+
 			if( Array.isArray( settings.colors )){
 				for( var color of settings.colors ){
 					if( !color ) continue;
@@ -297,12 +374,14 @@ angular.module("app", [])
 
 			if( Object.keys( _colors ).length == 0 ) _colors = Color.build( DEFAULTS.colors );
 
+			window.view   = $scope.view   = settings.view            = _view;
 			window.colors = $scope.colors = settings.colors = colors = _colors;
 			window.grid   = $scope.grid   = settings.grid            = _grid;
 			
 			console.log( "Using colors:",   settings.colors );
-			console.log( "Using grid:",     settings.grid );
-			console.log( "Using settings:", settings );
+			console.log( "Using grid:",     settings.grid   );
+			console.log( "Using grid:",     settings.view   );
+			console.log( "Using settings:", settings        );
 		});
 	};
 });
@@ -337,8 +416,10 @@ function loadSavedSettings(){
 	return load;
 };
 function saveSettings( settings ){
+	console.time( "Saving!" );
 	var save        = {}, grid;
 	save.colors     = Object.keys( settings.colors ) || DEFAULTS.colors;
+	save.view       = settings.view;
 	save.grid       = [];
 	save.col_size   = settings.col_size || DEFAULTS.col_size;
 	save.grid_opacity = Math.min( 1, Math.max( 0, settings.grid_opacity || 1 ));
@@ -355,6 +436,7 @@ function saveSettings( settings ){
 
 	localStorage.setItem( "ristipisto_save", JSON.stringify( save ));
 
+	console.timeEnd( "Saving!" );
 	console.log( "Saved scene:", save );
 }
 function toDataURL( url, callback ){
