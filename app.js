@@ -5,10 +5,30 @@ var DEFAULTS = {
 
 
 angular.module("app", [])
-.run(function( $rootScope ){
+.run(function( $rootScope, $window, $timeout ){
 	var colors = $rootScope.colors = {};
 	colors["ffffff"] = new Color( "ffffff" );
 	colors["000000"] = new Color( "000000" );
+
+	onResize();
+	$rootScope.$watch(function(){ return document.body.clientWidth;  }, onResize );
+	$rootScope.$watch(function(){ return document.body.clientHeight; }, onResize );
+	document.body.onscroll = ()=>{
+		console.log( "onScroll", $rootScope.windowWidth, document.body.clientWidth, $rootScope.windowHeight, document.body.clientHeight );
+		onResize();
+	};
+	setInterval( onResize, 1000 );
+
+	function onResize(){
+		var _nw = $rootScope.windowWidth;
+		var _nh = $rootScope.windowHeight;
+		$rootScope.windowWidth  = document.body.clientWidth;
+		$rootScope.windowHeight = document.body.clientHeight;
+		if( $rootScope.windowWidth != _nw || $rootScope.windowHeight != _nh ){
+			console.log( "onResize() ::", _nw+"x"+_nh, "->", $rootScope.windowWidth+"x"+$rootScope.windowHeight );
+			$timeout();
+		}
+	}
 })
 .controller("appController", function( $scope, $rootScope, $element, $timeout, $q ){
 
